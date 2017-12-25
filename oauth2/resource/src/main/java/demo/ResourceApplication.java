@@ -1,5 +1,6 @@
 package demo;
 
+import com.google.common.collect.Maps;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -12,12 +13,19 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @SpringBootApplication
 @RestController
@@ -56,10 +64,33 @@ public class ResourceApplication extends ResourceServerConfigurerAdapter {
         return new Message("Hello World");
     }
 
-    @RequestMapping("/custom")
+    @GetMapping("/custom")
     public Message custom() {
 
         return new Message("Hello World");
+    }
+
+    @GetMapping("/get-supplier/{id}")
+    public Map<String, String> getSupplier(@PathVariable("id") int id) {
+        Map<String, String> supplier = new HashMap<>();
+        supplier.put("companyName", "name" + id);
+        supplier.put("email", "email@user" + id + ".com");
+        return supplier;
+    }
+
+    @GetMapping("/get-suppliers")
+    public Map<String, Object> getSuppliers() {
+        List<Map<String, String>> suppliers = IntStream.range(0, 3).mapToObj(id -> {
+            Map<String, String> supplier = new HashMap<>();
+            supplier.put("id", Integer.toString(id));
+            supplier.put("companyName", "name" + id);
+            supplier.put("email", "email@user" + id + ".com");
+            return supplier;
+        }).collect(Collectors.toList());
+        HashMap<String, Object> map = Maps.newHashMap();
+        map.put("content", suppliers);
+        return map;
+
     }
 
     @Override
