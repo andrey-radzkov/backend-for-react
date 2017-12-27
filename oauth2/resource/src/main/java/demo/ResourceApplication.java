@@ -7,6 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
@@ -17,13 +18,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -34,7 +34,7 @@ import java.util.stream.IntStream;
 public class ResourceApplication extends ResourceServerConfigurerAdapter {
 
     private static Logger LOG = Logger.getLogger(ResourceApplication.class);
-
+    private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
     @Value("${security.oauth2.resource.tokenInfoUri:}")
     private String tokenInfoUri;
 
@@ -69,6 +69,33 @@ public class ResourceApplication extends ResourceServerConfigurerAdapter {
 
         return new Message("Hello World");
     }
+
+    @GetMapping("/server-side-event")
+    public SseEmitter serverSideEvent() {
+        SseEmitter emitter = new SseEmitter();
+        this.emitters.add(emitter);
+
+        emitter.onCompletion(() -> this.emitters.remove(emitter));
+        emitter.onTimeout(() -> this.emitters.remove(emitter));
+
+        return emitter;
+    }
+
+    @Scheduled(fixedDelay = 5000)
+    public void scheduledMessage() {
+        List<SseEmitter> deadEmitters = new ArrayList<>();
+        emitters.forEach(emitter -> {
+            try {
+                emitter.send(new Message("pushed message from server"));
+            } catch (Exception e) {
+                deadEmitters.add(emitter);
+            }
+        });
+
+        emitters.remove(deadEmitters);
+    }
+//    const eventSource = new EventSource('/api/resource/server-side-event/?access_token=eyJhbGc');
+//    eventSource.onmessage = function(e){console.log(e)}
 
     @GetMapping("/get-supplier/{id}")
     public Map<String, String> getSupplier(@PathVariable("id") int id) {
