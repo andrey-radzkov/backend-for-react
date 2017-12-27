@@ -96,7 +96,7 @@ public class ResourceApplication extends ResourceServerConfigurerAdapter {
     }
 //    const eventSource = new EventSource('/api/resource/server-side-event/?access_token=eyJhbGc');
 //    eventSource.onmessage = function(e){console.log(e)}
-
+//    https://www.npmjs.com/package/react-eventsource
     @GetMapping("/get-supplier/{id}")
     public Map<String, String> getSupplier(@PathVariable("id") int id) {
         Map<String, String> supplier = new HashMap<>();
