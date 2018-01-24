@@ -22,7 +22,10 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -94,9 +97,10 @@ public class ResourceApplication extends ResourceServerConfigurerAdapter {
 
         emitters.remove(deadEmitters);
     }
-//    const eventSource = new EventSource('/api/resource/server-side-event/?access_token=eyJhbGc');
-//    eventSource.onmessage = function(e){console.log(e)}
-//    https://www.npmjs.com/package/react-eventsource
+
+    //    const eventSource = new EventSource('/api/resource/server-side-event/?access_token=eyJhbGc');
+    //    eventSource.onmessage = function(e){console.log(e)}
+    //    https://www.npmjs.com/package/react-eventsource
     @GetMapping("/get-supplier/{id}")
     public Map<String, String> getSupplier(@PathVariable("id") int id) {
         Map<String, String> supplier = new HashMap<>();
@@ -133,31 +137,6 @@ public class ResourceApplication extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
         resources.resourceId("resource-id1");
-    }
-
-    class Message {
-
-        private String id = UUID.randomUUID().toString();
-        private String content;
-
-        Message() {
-
-        }
-
-        public Message(String content) {
-
-            this.content = content;
-        }
-
-        public String getId() {
-
-            return id;
-        }
-
-        public String getContent() {
-
-            return content;
-        }
     }
 
 
