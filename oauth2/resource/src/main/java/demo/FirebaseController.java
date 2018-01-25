@@ -43,11 +43,12 @@ public class FirebaseController {
                 FcmMessageOptions options = FcmMessageOptions.builder()
                         .setTimeToLive(Duration.ofHours(1))
                         .build();
+                String body = "New connect " + value + " with MAZ activated";
                 NotificationPayload payload = NotificationPayload.builder()
-                        .setBody("A Personal Message body")
-                        .setTitle("Personal Message title")
+                        .setTitle("Buyer MTZ sent a message")
+                        .setBody(body)
                         .setTag(new Date().toString())
-                        .setIcon("https://banana.by/uploads/posts/2018-01/1515748685_01.jpg")
+                        .setIcon("https://kz.all.biz/img/kz/catalog/670883.jpeg")
                         .setColor("#aa0000")
                         .build();
                 fcmClient.send(new NotificationMulticastMessage(options, Lists.newArrayList(token), payload));
