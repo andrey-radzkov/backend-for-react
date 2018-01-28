@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.springframework.guides</groupId>
-	<artifactId>tech-talk-oauth2-demo</artifactId>
+	<artifactId>backend-for-react</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Spring Security Angular Samples</name>
