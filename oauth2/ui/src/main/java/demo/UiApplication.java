@@ -1,6 +1,7 @@
 package demo;
 
 import com.google.common.collect.Maps;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
@@ -37,6 +38,7 @@ public class UiApplication extends WebSecurityConfigurerAdapter {
         return "<h1>Hello World</h1>";
     }
 
+    @ApiOperation(value = "View Single supplier", response = Map.class)
     @GetMapping("/get-supplier/{id}")
     @ResponseBody
     public Map<String, String> getSupplier(@PathVariable("id") int id) {
@@ -46,6 +48,7 @@ public class UiApplication extends WebSecurityConfigurerAdapter {
         return supplier;
     }
 
+    @ApiOperation(value = "View a list of available suppliers", response = Map.class)
     @GetMapping("/get-suppliers")
     @ResponseBody
     public Map<String, Object> getSuppliers() {
@@ -73,6 +76,11 @@ public class UiApplication extends WebSecurityConfigurerAdapter {
                 .antMatchers("/static/js/index.html"
                         , "/static/js/home.html"
                         , "/home.html"
+                        , "/swagger-ui.html"
+                        , "/v2/api-docs"
+                        ,"/swagger-resources/**"
+                        ,"/v2/api-docs"
+                        ,"/webjars/**"
                         , "/"
                         , "/login"
                         , "/get-supplier*"
